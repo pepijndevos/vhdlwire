@@ -15,13 +15,16 @@ entity top is
 end top;
 
 architecture behavior of top is
+  signal packet_byte : std_logic_vector(7 downto 0);
+  signal packet_byte_ready : std_logic;
   signal output : std_logic_vector(7 downto 0);
   signal output_ready : std_logic;
+  signal new_frame : std_logic;
   signal dbgw : std_logic_vector(7 downto 0);
   signal tx_busy : std_logic;
 begin
 
-  LEDG_N <= not rf_in;
+  LEDG_N <= not packet_byte_ready;
   LEDR_N <= not output_ready;
 
   serial: entity work.uart generic map (
@@ -46,9 +49,19 @@ begin
     clk => sys_clk,
     rst_n => rst_n,
     input => rf_in,
+    output => packet_byte,
+    output_ready => packet_byte_ready,
+    new_frame => new_frame
+  );
+
+  unpack: entity work.askunpack port map (
+    clk => sys_clk,
+    rst_n => rst_n,
+    input => packet_byte,
+    input_ready => packet_byte_ready,
+    new_frame => new_frame,
     output => output,
-    output_ready => output_ready,
-    new_frame => open
+    output_ready => output_ready
   );
 
 end;

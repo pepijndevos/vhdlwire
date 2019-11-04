@@ -19,18 +19,6 @@ entity askrcv is
 end askrcv;
 
 architecture behavioral of askrcv is
-  signal ce_counter : natural := 0;
-  signal ce : std_logic := '0'; -- clock enable
-  signal last_input : std_logic := '0';
-  signal bits : std_logic_vector(11 downto 0) := x"000";
-  signal byte : std_logic_vector(7 downto 0) := x"00";
-  signal active : boolean := false;
-  signal bit_count : integer range 0 to 15 := 0;
-  signal buf_len : integer range 0 to 15 := 0;
-  signal count : natural := 0;
-  signal integrator : integer range 0 to 15 := 0;
-  signal pll_ramp : integer range 0 to 255 := 0;
-
   constant MAX_PAYLOAD_LEN : natural := 67;
   constant HEADER_LEN : natural := 4;
   constant MAX_MESSAGE_LEN : natural := (MAX_PAYLOAD_LEN - HEADER_LEN - 3);
@@ -43,6 +31,19 @@ architecture behavioral of askrcv is
   constant RAMP_INC_ADVANCE : natural := (RAMP_INC+RAMP_ADJUST);
   constant PREAMBLE_LEN : natural := 8;
   constant START_SYMBOL : std_logic_vector(11 downto 0) := x"b38";
+
+  signal ce_counter : natural := 0;
+  signal ce : std_logic := '0'; -- clock enable
+  signal last_input : std_logic := '0';
+  signal bits : std_logic_vector(11 downto 0) := x"000";
+  signal byte : std_logic_vector(7 downto 0) := x"00";
+  signal byte_save : std_logic_vector(7 downto 0) := x"00";
+  signal active : boolean := false;
+  signal bit_count : integer range 0 to 15 := 0;
+  signal buf_len : integer range 0 to 255 := 0;
+  signal count : natural := 0;
+  signal integrator : integer range 0 to 15 := 0;
+  signal pll_ramp : integer range 0 to 255 := 0;
 
   function sixtofour(word : in std_logic_vector(5 downto 0))
     return std_logic_vector is
@@ -91,6 +92,8 @@ begin
   process(clk, rst_n, ce)
   begin
     if rising_edge(clk) then
+      output_ready <= '0'; -- set below
+      new_frame <= '0'; -- set below
       if rst_n = '0' then
         integrator <= 0;
         pll_ramp <= 0;
@@ -101,10 +104,7 @@ begin
         buf_len <= 0;
         count <= 0;
         output <= (others => '0');
-        output_ready <= '0';
       elsif ce = '1' then
-        output_ready <= '0'; -- set below
-        new_frame <= '0'; -- set below
         if pll_ramp > RAMP_LEN then
           if input /= last_input then
             if pll_ramp < RAMP_TRANSITION then
@@ -133,15 +133,13 @@ begin
           if active then
             bit_count <= bit_count + 1;
             if bit_count >= 11 then
+              output_ready <= '1';
+              output <= byte;
               if buf_len = 0 then
                 count <= to_integer(unsigned(byte));
                 -- TODO throw away invalid count?
-              else
-                output <= byte;
-                output_ready <= '1';
-                if buf_len >= count then
-                  active <= false;
-                end if;
+              elsif buf_len >= count then
+                active <= false;
               end if;
               buf_len <= buf_len + 1;
               bit_count <= 0;
@@ -163,5 +161,4 @@ begin
       end if; -- ce
     end if; -- rising_edge(clk)
   end process;
-
 end behavioral;
