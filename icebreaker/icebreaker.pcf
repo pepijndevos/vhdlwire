@@ -1,0 +1,15 @@
+# 12 MHz clock
+set_io sys_clk        35
+
+# RS232
+set_io rx          6
+set_io tx          9
+
+# Button
+set_io rst_n      10
+set_io -nowarn ledr_n     11
+set_io -nowarn ledg_n     37
+
+# PMOD 1A
+#set_io -nowarn P1A1        4
+set_io rf_in        4
