@@ -1,0 +1,21 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device>gw1n1-004</Device>
+    <FileList>
+        <File path="src/gowin_pll/gowin_pll.v" type="file.source" enable="1"/>
+        <File path="src/rgb_psram.cst" type="file.cst" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/bram.v" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/display.vhd" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/receiver.vhd" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/tilerom.mem" type="file.other" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/tilerom.v" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/top.vhd" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/uart.vhd" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/unpacker.vhd" type="file.source" enable="1"/>
+        <File path="/home/pepijn/code/vhdlwire/src/vga_controller.vhd" type="file.source" enable="1"/>
+        <File path="src/VGAMod.v" type="file.source" enable="1"/>
+    </FileList>
+</Project>

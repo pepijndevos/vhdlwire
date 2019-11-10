@@ -37,11 +37,10 @@ architecture behavioral of askrcv is
   signal last_input : std_logic := '0';
   signal bits : std_logic_vector(11 downto 0) := x"000";
   signal byte : std_logic_vector(7 downto 0) := x"00";
-  signal byte_save : std_logic_vector(7 downto 0) := x"00";
   signal active : boolean := false;
   signal bit_count : integer range 0 to 15 := 0;
   signal buf_len : integer range 0 to 255 := 0;
-  signal count : natural := 0;
+  signal count : integer range 0 to 255 := 0;
   signal integrator : integer range 0 to 15 := 0;
   signal pll_ramp : integer range 0 to 255 := 0;
 
