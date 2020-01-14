@@ -7,6 +7,7 @@ module bram(input clk, wren, oen,
 parameter bits = 11;
 
 reg [7:0] memory [0:(1<<bits)-1];
+initial $readmemb("/home/pepijn/code/gowinrfc/mem.txt", memory);
 
 always @(posedge clk)
   if (wren == 1'b1)

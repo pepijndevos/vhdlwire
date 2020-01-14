@@ -60,20 +60,20 @@ end component;
 
 begin
 
-mypll: Gowin_PLL port map (
-        clkout => clk_200,
-        clkoutd => clk_33,
-        clkin => xtal_in
-);
-
+--mypll: Gowin_PLL port map (
+--        clkout => clk_200,
+--        clkoutd => clk_33,
+--        clkin => xtal_in
+--);
+clk_33 <= xtal_in;
 lcd_clk <= clk_33;
 
 --led_r <= '1';
 led_g <= not tx_busy;
-led_b <= '1';
+led_b <= not rf_in;
 
   serial: entity work.uart generic map (
-    clk_freq => 33_300_000,
+    clk_freq => 24_000_000,
     baud_rate => 9600
   ) port map (
     clk => clk_33,
@@ -104,7 +104,7 @@ led_b <= '1';
   lcd_b <= (others => pixel);
 
   rcv: entity work.askrcv generic map (
-    divider => 2081
+    divider => 1500
   ) port map (
     clk => clk_33,
     rst_n => rst_n,
@@ -137,7 +137,9 @@ led_b <= '1';
   process(clk_33, rst_n)
   begin
     if rising_edge(clk_33) then
-      if rst_n = '0' or unsigned(wraddress) >= 1500 then
+      if rst_n = '0'
+      or unsigned(wraddress) >= 510
+      or (output_ready = '1' and output = x"0c") then
         wraddress <= (others => '0');
         led_r <= '1';
       elsif output_ready = '1' then

@@ -71,11 +71,11 @@ begin
 
   -- t-2
   -- 8x8 bitmap is upscaled 2x
-  -- 800/16=50
   -- 480/16=30
+  -- 272/16=17
   -- tile size = 8x8
   -- two chars per word
-  -- (row2x/8)*50 + col2x/8
+  -- (row2x/8)*30 + col2x/8
   ucol <= to_unsigned(column, 11);
   ucolt1 <= to_unsigned(column+1, 11);
   ucolt2 <= to_unsigned(column+2, 11);
@@ -86,8 +86,8 @@ begin
   row2x <= shift_right(urow, 1);
   rowaddr <= shift_right(row2x,3); --/8
   coladdr <= shift_right(col2xt2, 3); --/8
-  -- x*50 = (x * 2) + (x * 16) + (x * 32) = (x << 1) + (x << 4) + (x << 5)
-  row40x <= resize(shift_left(rowaddr, 1) + shift_left(rowaddr, 4) + shift_left(rowaddr, 5), 11);
+  -- x*30 = (x * 32) - (x *2) = (x << 5) - (x << 1)
+  row40x <= resize(shift_left(rowaddr, 5) - shift_left(rowaddr, 1), 11);
   vramaddress <= std_logic_vector(row40x + coladdr);
 
   -- t-1

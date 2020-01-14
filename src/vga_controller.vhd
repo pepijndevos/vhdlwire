@@ -27,15 +27,15 @@ USE ieee.std_logic_1164.all;
 
 ENTITY vga_controller IS
 	GENERIC(
-		h_pulse 	:	INTEGER := 1;    	--horiztonal sync pulse width in pixels
-		h_bp	 	:	INTEGER := 182;		--horiztonal back porch width in pixels
-		h_pixels	:	INTEGER := 800;		--horiztonal display width in pixels
-		h_fp	 	:	INTEGER := 210;		--horiztonal front porch width in pixels
+		h_pulse 	:	INTEGER := 10;    	--horiztonal sync pulse width in pixels
+		h_bp	 	:	INTEGER := 50;		--horiztonal back porch width in pixels
+		h_pixels	:	INTEGER := 480;		--horiztonal display width in pixels
+		h_fp	 	:	INTEGER := 8;		--horiztonal front porch width in pixels
 		h_pol		:	STD_LOGIC := '1';		--horizontal sync pulse polarity (1 = positive, 0 = negative)
-		v_pulse 	:	INTEGER := 5;			--vertical sync pulse width in rows
-		v_bp	 	:	INTEGER := 0;			--vertical back porch width in rows
-		v_pixels	:	INTEGER := 480;		--vertical display width in rows
-		v_fp	 	:	INTEGER := 45;			--vertical front porch width in rows
+		v_pulse 	:	INTEGER := 11;			--vertical sync pulse width in rows
+		v_bp	 	:	INTEGER := 12;			--vertical back porch width in rows
+		v_pixels	:	INTEGER := 272;		--vertical display width in rows
+		v_fp	 	:	INTEGER := 8;			--vertical front porch width in rows
 		v_pol		:	STD_LOGIC := '1');	--vertical sync pulse polarity (1 = positive, 0 = negative)
 	PORT(
 		pixel_clk	:	IN		STD_LOGIC;	--pixel clock at frequency of VGA mode being used
