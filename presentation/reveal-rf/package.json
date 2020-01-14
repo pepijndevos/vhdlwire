@@ -1,0 +1,19 @@
+{
+  "name": "reveal-rf",
+  "version": "1.0.0",
+  "description": "Reveal in an Electron app",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Pepijn de Vos",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^7.1.9",
+    "electron-rebuild": "^1.8.8"
+  },
+  "dependencies": {
+    "reveal.js": "^3.8.0",
+    "serialport": "^8.0.6"
+  }
+}

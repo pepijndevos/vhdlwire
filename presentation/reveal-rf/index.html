@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="node_modules/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="node_modules/reveal.js/css/theme/white.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+          <h1>Slide 1</h1>
+          <p>Some text maybe with extra long lines to see if line wrapping works kinda maybe the way I want</p>
+          <ul>
+            <li>A list item</li>
+            <li>Another list item</li>
+          </ul>
+        </section>
+				<section>
+          <h1>Slide 2</h1>
+          <p>Some other text</p>
+          <aside class="notes">In case speaker notes are defined these are used instead of the slide content. This allows for either displaying auxilary information, or special formatting of the text slide on the small display. It appears that these notes are copied verbatim including <strong>html</strong></aside>
+        </section>
+			</div>
+		</div>
+		<script src="node_modules/reveal.js/js/reveal.js"></script>
+		<script>
+      function sendSlideText(slide) {
+        if (Reveal.getSlideNotes()) {
+          ipcRenderer.send('asynchronous-message', Reveal.getSlideNotes())
+        } else {
+          ipcRenderer.send('asynchronous-message', slide.innerText)
+        }
+      }
+      const { ipcRenderer } = require('electron')
+      Reveal.initialize({dependencies: [ { src: 'node_modules/reveal.js/plugin/notes/notes.js', async: true } ] });
+      Reveal.addEventListener( 'slidechanged', function( event ) {
+        // event.previousSlide, event.currentSlide, event.indexh, event.indexv
+        sendSlideText(event.currentSlide)
+      } );
+      Reveal.addEventListener( 'ready', function( event ) {
+        // event.previousSlide, event.currentSlide, event.indexh, event.indexv
+        sendSlideText(event.currentSlide)
+      } );
+		</script>
+	</body>
+</html>
