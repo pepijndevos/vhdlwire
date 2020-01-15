@@ -6,18 +6,251 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>
-          <h1>Slide 1</h1>
-          <p>Some text maybe with extra long lines to see if line wrapping works kinda maybe the way I want</p>
+        <section>
+          <h1>Project Apicula</h1>
+          <p>Documenting the bitstream format of Gowin FPGAs</p>
+        </section>
+        <section>
+          <h4>Outline</h4>
+          <ol>
+            <li>Background
+              <ol>
+                <li>FPGA internals</li>
+                <li>The open source tools</li>
+              </ol>
+            </li>
+            <li>Internship
+              <ol>
+                <li>Synthesis</li>
+                <li>Fuzzing &amp; ChipDB decoding</li>
+                <li>Results</li>
+              </ol>
+            </li>
+            <li>Applications
+              <ol>
+                <li>Research</li>
+                <li>Education</li>
+              </ol>
+            </li>
+          </ol>
+        </section>
+        <section>
+          <p>Programmable logic device</p>
+          <p>HDL 	&gt; boolean logic &gt; LUTs &amp; DFFs</p>
+          <img class="plain stretch" src="fig/slice.svg">
+          <aside class="notes">
+Synthesis converts hardware description language to combinational logic and sequential logic.
+
+Combinational logic (e.g. SOP) is a truth table, truth table is stored in lookup table.
+
+Seqential logic (e.g. state machine) is mapped to data flip-flops.
+          </aside>
+        </section>
+        <section>
+          <p>Field Programmable Gate Array</p>
+          <img class="plain stretch" src="fig/clu.svg">
+          <aside class="notes">
+FPGA stands for Field Programmable Gate Array.
+
+Field programmable: loading bitstream from flash.
+
+Gate Array: a Grid of slices.
+
+A slice has LUTs, DFFs, and wires to adjacent tiles.
+
+70% of FPGA area is routing!
+          </aside>
+        </section>
+        <section>
+          <img class="plain stretch" src="fig/toolchain-flow.svg">
+          <aside class="notes">
+Traditional vendor flow (e.g. Quartus) takes HDL and produces a bitstream.
+
+Yosys: open source synthesis to boolean logic netlist
+
+Nextpnr: open source place and route
+
+Individual: PnR to bitstream
+          </aside>
+        </section>
+        <section>
+          <h4>Project Apicula</h4>
           <ul>
-            <li>A list item</li>
-            <li>Another list item</li>
+            <li>Yosys target</li>
+            <li>Nextpnr target</li>
+            <li>Bitstream parser/generator</li>
+          </ul>
+          <aside class="notes">
+Partial Yosys support was added prior to my internship. Can be done based purely on official documentation.
+
+For the current proof of concept, The nextpnr-generic target is used.
+
+Nextpnr and bitstream generation require intimate understanding of FPGA architecture and bitstream format.
+          </aside>
+        </section>
+        <section>
+          <h4>Yosys synthesis flow</h4>
+          <img class="plain stretch" src="fig/synthflow.svg">
+          <aside class="notes">
+Synthesis takes a HDL program and a primitive cell library.
+Coarse synthesis maps HDL to word-level primitives.
+Fine synthesis maps to bit-level primitives.
+Techmap maps to vendor-specific primitives.
+
+During my internship the cell library of vendor-specific primitives was greatly expanded to support all DFF variations, BRAM initialization, and more.
+          </aside>
+        </section>
+        <section>
+          <h4>Fuzzing</h4>
+          <ol>
+            <li>Generate bitstream</li>
+            <li>Modify code</li>
+            <li>Generate bitstream</li>
+            <li>Compare</li>
+            <li>Repeat a million times</li>
+          </ol>
+        </section>
+        <section>
+          <h4>Fuzzing</h4>
+          <ul>
+            <li>Preferred method for legal reasons</li>
+            <li>Several fuzzers written</li>
+            <li>Roadblock: no routing info in PnR output</li>
+            <li>Soultion: Complement with ChipDB decoding</li>
           </ul>
         </section>
-				<section>
-          <h1>Slide 2</h1>
-          <p>Some other text</p>
-          <aside class="notes">In case speaker notes are defined these are used instead of the slide content. This allows for either displaying auxilary information, or special formatting of the text slide on the small display. It appears that these notes are copied verbatim including <strong>html</strong></aside>
+        <section>
+          <h4>ChipDB decoding</h4>
+          <ul>
+            <li>Vendor FPGA tools come with undocumented data files</li>
+            <li>Reverse-engineer file structure and write parser</li>
+          </ul>
+          <img class="stretch" src="fig/fuse.png">
+        </section>
+        <section>
+          <h4>Tile format</h4>
+          <img class="stretch" src="fig/tile.png">
+          <aside class="notes">
+Each pixel represents a bit in the bitstream. Pixel colour indicates the type.
+
+Along the bottom are the data flip flops and lookup tables.
+
+The rest is filled with multiplexers to slice inputs and adjacent tiles.
+          </aside>
+        </section>
+        <section>
+          <img class="stretch" src="fig/picorv.png">
+          <aside class="notes">
+PicoRV32 RISC-V CPU, synthesized, placed and routed with Yosys and Nextpnr, displayed in the Gowin Floorplanner.
+          </aside>
+        </section>
+        <section>
+          <img class="stretch" src="fig/primes.jpg">
+          <aside class="notes">
+RISC-V CPU calculating primes on a GW1NR-9 using only open source tools.
+          </aside>
+        </section>
+        <section>
+          <h1>Project Apicula</h1>
+          <a href="https://github.com/pepijndevos/apicula/">github.com/pepijndevos/apicula</a>
+          <p class="fragment">But why should you care?</p>
+        </section>
+        <section>
+          <h4>Research</h4>
+          <table>
+            <tr><th>Research Goal</th><th>Proprietary</th><th>Open Source</th></tr>
+            <tr>
+              <td>Synthesis algorithms</td>
+              <td>
+                <ul>
+                  <li>Try them in dated academic synthesis tool</li>
+                  <li>No real-world impact</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Try them in modern synthesis tool</li>
+                  <li>Immediate real-world impact</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>PnR algorithms</td>
+              <td>
+                <ul>
+                  <li>Try them on abstract imaginary toy FPGAs</li>
+                  <li>No real-world impact</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Try them on commercial FPGAs</li>
+                  <li>Immediate real-world impact</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>HDL</td>
+              <td>
+                <ul>
+                  <li>Compile to VHDL/Verilog</li>
+                  <li>Deal with vendor incompatibilities</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Write new synthesis frontend</li>
+                  <li>Target well-defined intermediate representation</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+          <aside class="notes">
+Open source allows developing new algorithms for synthesis and PnR on practical, real-world tools.
+
+Open source allows real innovation in hardware description languages.
+          </aside>
+        </section>
+        <section>
+          <h4>Education</h4>
+          <img class="stretch" src="fig/tangnano.png">
+          <aside class="notes">
+Sipeed Tang Nano FPGA Board Powered by GW1N-1 FPGA
+
+$4.90
+
+Small FPGA boards for less than the price of an Arduino.
+
+An FPGA for every student!
+          </aside>
+        </section>
+        <section>
+          <img class="stretch" src="fig/gowinlicense.png">
+          <aside class="notes">
+Gowin requires a license to use their tools.
+
+It can take several days or even weeks to get a license.
+
+Very unpractical in a classroom setting.
+          </aside>
+        </section>
+        <section>
+          <h4>Open source</h4>
+          <ul>
+            <li>Cheap FPGA boards</li>
+            <li>No license required</li>
+            <li>Works <em>properly</em> on Windows, macOS, Linux</li>
+            <li>Fast synthesis times</li>
+            <li>Not horrible</li>
+            <li>Cool stuff like formal verification</li>
+          </ul>
+          <img class="stretch" src="fig/platforms.png">
+        </section>
+        <section>
+          <h1>Project Apicula</h1>
+          <a href="https://github.com/pepijndevos/apicula/">github.com/pepijndevos/apicula</a>
+          <p class="fragment">Thank you!</p>
+          <p class="fragment">Questions?</p>
         </section>
 			</div>
 		</div>
@@ -31,7 +264,8 @@
         }
       }
       const { ipcRenderer } = require('electron')
-      Reveal.initialize({dependencies: [ { src: 'node_modules/reveal.js/plugin/notes/notes.js', async: true } ] });
+      Reveal.initialize({hash: true, slideNumber: true, 
+        dependencies: [ { src: 'node_modules/reveal.js/plugin/notes/notes.js', async: true } ] });
       Reveal.addEventListener( 'slidechanged', function( event ) {
         // event.previousSlide, event.currentSlide, event.indexh, event.indexv
         sendSlideText(event.currentSlide)
